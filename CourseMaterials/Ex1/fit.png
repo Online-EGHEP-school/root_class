@@ -1,0 +1,59 @@
+{
+//========= Macro generated from object: data/
+//========= by ROOT version6.18/04
+   
+   TH1D *data__1 = new TH1D("data__1","",50,0,100);
+   data__1->SetBinContent(23,1);
+   data__1->SetBinContent(24,3);
+   data__1->SetBinContent(25,9);
+   data__1->SetBinContent(26,31);
+   data__1->SetBinContent(27,78);
+   data__1->SetBinContent(28,219);
+   data__1->SetBinContent(29,461);
+   data__1->SetBinContent(30,753);
+   data__1->SetBinContent(31,1158);
+   data__1->SetBinContent(32,1467);
+   data__1->SetBinContent(33,1590);
+   data__1->SetBinContent(34,1464);
+   data__1->SetBinContent(35,1191);
+   data__1->SetBinContent(36,794);
+   data__1->SetBinContent(37,399);
+   data__1->SetBinContent(38,230);
+   data__1->SetBinContent(39,105);
+   data__1->SetBinContent(40,30);
+   data__1->SetBinContent(41,11);
+   data__1->SetBinContent(42,4);
+   data__1->SetBinContent(43,1);
+   data__1->SetBinContent(44,1);
+   data__1->SetEntries(10000);
+   
+   TF1 *gauss1 = new TF1("gauss","[0] / sqrt(2.0 * TMath::Pi()) / [2] * exp(-(x-[1])*(x-[1])/2./[2]/[2])",0,100, TF1::EAddToList::kNo);
+   gauss1->SetFillStyle(0);
+
+   Int_t ci;      // for color index setting
+   TColor *color; // for color definition with alpha
+   ci = TColor::GetColor("#ff0000");
+   gauss1->SetLineColor(ci);
+   gauss1->SetLineWidth(2);
+   gauss1->SetChisquare(14.5526);
+   gauss1->SetNDF(19);
+   gauss1->GetXaxis()->SetTitleOffset(1);
+   gauss1->GetYaxis()->SetTitleOffset(1);
+   gauss1->SetParameter(0,19971.2);
+   gauss1->SetParError(0,199.857);
+   gauss1->SetParLimits(0,0,0);
+   gauss1->SetParameter(1,65.0287);
+   gauss1->SetParError(1,0.0501043);
+   gauss1->SetParLimits(1,50,80);
+   gauss1->SetParameter(2,5.00477);
+   gauss1->SetParError(2,0.0360404);
+   gauss1->SetParLimits(2,0,0);
+   gauss1->SetParent(data__1);
+   data__1->GetListOfFunctions()->Add(gauss1);
+   data__1->GetXaxis()->SetTitle("x");
+   data__1->GetXaxis()->SetTitleOffset(1);
+   data__1->GetYaxis()->SetTitle("N");
+   data__1->GetYaxis()->SetTitleOffset(1);
+   data__1->GetZaxis()->SetTitleOffset(1);
+   data__1->Draw("");
+}
