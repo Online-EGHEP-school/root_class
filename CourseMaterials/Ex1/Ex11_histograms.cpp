@@ -54,7 +54,7 @@ int main() {
     h2->Fill(gRandom->Gaus(0.,3.),gRandom->Gaus(0.,7.)); // 2-D
   }
 
-  // set plotting parameters like (axis name, titles, offset,.......)
+  // // Make the plot esthetically better by setting plotting parameters like (axis name, titles, offset,.......)
   h1->SetTitle("TH1F Plot");
   h1->GetXaxis()->SetTitle("X Axis");
   h1->GetXaxis()->SetTitleOffset(1.4);
