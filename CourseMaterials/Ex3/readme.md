@@ -1,50 +1,31 @@
-# Working With Columnar Data
-Welcome to the exercises of the **Working With Columnar Data** learning module!
+# Working With Simulated data
+This is a simple example of analysing a simulated LHC data using C++. It is based on two samples:
+1. ZH production, with Z→μμ and H→bb (the signal),
+2. Zbb production with Z→ee (the background).
+The aim of this excercise is to find similarities and differences between the signal and background events, by making histograms of various quantities.
 
-## Analyse a Dataset
-Consider the *ntuple* dataset that you can find in the *hsimple.root* file in the *tutorials directory*.
-Starting from it, draw a plot of the sum of the *px* and *py* column for every value of *pz* between -2 and 2.
-Exercise the ROOT knowledge you gained carrying out the exercise in the following ways:
- - Using C++
- - Using Python
- - Using TBrowser if possible
- - Using *TNtuple::Draw*
-
-## A Random Dataset
-With a method of your choice, create a TTree with three columns filled with random numbers. The columns should be done as follows:
- - **Column 1**: Poisson numbers with mu = 4
- - **Column 2**: Gaussian numbers with mean = 3 and sigma = 1.5
- - **Column 3**: Exponential numbers between 0 and 20
-
-Write the dataset in a TFile and then study it with TBrowser.
-Can you fit the distributions and recover the original values of the parameters?
-
-## Work with the CSV Data Source
-In this exercise we will produce a plot of the invariant mass of muons pairs coming from real data of the CMS 
-experiment (DOI: [10.7483/OPENDATA.CMS.CB8H.MFFA](http://opendata.cern.ch/record/700)).
-First of all, download the input file:
+## Analysis code and dataset
+The analysis code hirarchy is as follow:
+Ex3
+ |-analysis.cpp
+ |-analysis.h
+ |-plot.cpp 
+In addition, two files represents signal (**H_events.root**)nd background (**Zbb_events.root**) are also exist.
+## About code
+The main file to edit will be analysis.cpp. This code loops over all the events in the file:
 ```
-wget https://root.cern.ch/files/tutorials/tdf014_CsvDataSource_MuRun2010B.csv
+for (Long64_t jentry=0; jentry<nentries;jentry++){
 ```
-The kinematic properties of the muons are stored in columns. For the "first" muon they are called 
-*Q1, E1, px1, py1, pz1, pt1, eta1, phi1* and for the "second" one *Q2, E2, px2, py2, pz2, pt2, eta2, phi2*.
-You will use those to create your cuts and plots.
-
-Steps to accomplish:
-1) Fetch the input file from the web:
+Inside this loop, it loops over all the particles in each event:
 ```
-wget https://root.cern.ch/files/tutorials/tdf014_CsvDataSource_MuRun2010B.csv
+for(int i=0; i<_pdgid.size();i++) {
 ```
-2) Create a data frame around this CSV file:
-```
-auto tdf = ROOT::Experimental::TDF::MakeCsvDataFrame(fileName);
-```
-3) Apply a cut to the muon pairs, selecting the ones with opposite charge. Charges are stored in the Q1 and Q2 columns.
-4) Create a histogram of the invariant mass of the dimuon system. Choose a generous interval, say from 1 to 120 GeV. The formula for the invariant mass can be found [here](https://en.wikipedia.org/wiki/Invariant_mass).
-5) What resonances are you seeing?
-
-*Optional*
-1) Create a mass window around the *J/psi* mass, which is about 3.097 GeV and display the invariant mass distribution.
-2) Try to select only muon pairs in the central part of the detector (|eta| < 2 or 1). What happens to the spectrum? Do you have an idea why?
-
-The solution to this exercise can be found in the file [CMSDimuonMass.C](CMSDimuonMass.C).
+and it looks for stable particles *(if( _status[i]==1))* that are muons *(if(_pdgid[i]==13))*. A full list of particle ID codes is [available here](http://pdg.lbl.gov/2002/montecarlorpp.pdf).
+Further down, the code makes the combined dimuon 4-vector *(TLorentzVector sum = v1 + v2;)* and fills the histogram with the invariant mass of this new 4-vector.
+## Main Excercise
+Here are some good exercises. After making changes to the code, you will need to recompile (make), fixing any compilation errors, before you can run the updated code.
+1) Add some more histograms. The histogram is declared near the top of the code:
+TH1 * h_mass = new TH1F("mass", "mass", 100,0,300);
+which has 100 bins, between 0 and 300. Some interesting things to plot: the number of muons per event; the muon transverse momentum (pT), muon rapidity (y), dimuon rapidity, dimuon pT.2) Modify the code to find b quarks and b antiquarks (pdgid 5 and -5) - note that b-quarks will not have status 1! Then make similar plots to the muons: number of b-quarks, b and anti-b combined mass, etc.3) Look at the reconstructed jets in the event, stored in a vector _jets. Try matching jets to b-quarks, based on ΔR (see here, for example.) Plot the ΔR distribution, then require a jet to be with, for example ΔR<0.4 of a b-quark. After matching a jet to the b-quark and b-antiquark, plot the mass of the combined jets.
+## Fitting
+Finally, it is quite often worth fitting a parametric curve to the data. This code is a basic fitting example provided by the root authors. You could try including this into the plot.cpp code and fitting the dimuon mass distribution.
