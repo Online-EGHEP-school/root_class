@@ -5,12 +5,36 @@
 #include "TH1.h"
 
 int main(void) {
-	//analysis * a = new analysis("Zbb_events.root", "Zbb_histograms.root"); //VH_events.root, VH_histograms.root
+	//analysis * a = new analysis("Zbb_events.root", "Zbb_histograms.root");
 	analysis * a = new analysis("VH_events.root", "VH_histograms.root");
 	a->Loop();
 	delete a;
 }
 void analysis::Loop() {
+	//   In a ROOT session, you can do:
+	//      root> .L analysis.C
+	//      root> analysis t
+	//      root> t.GetEntry(12); // Fill t data members with entry number 12
+	//      root> t.Show();       // Show values of entry 12
+	//      root> t.Show(16);     // Read and show values of entry 16
+	//      root> t.Loop();       // Loop on all entries
+	//file:///home/dcs/Pictures/Screenshot%20from%202020-06-29%2010-45-41.png
+
+	//     This is the loop skeleton where:
+	//    jentry is the global entry number in the chain
+	//    ientry is the entry number in the current Tree
+	//  Note that the argument to GetEntry must be:
+	//    jentry for TChain::GetEntry
+	//    ientry for TTree::GetEntry and TBranch::GetEntry
+	//
+	//       To read only selected branches, Insert statements like:
+	// METHOD1:
+	//    fChain->SetBranchStatus("*",0);  // disable all branches
+	//    fChain->SetBranchStatus("branchname",1);  // activate branchname
+	// METHOD2: replace line
+	//    fChain->GetEntry(jentry);       //read all branches
+	//by  b_branchname->GetEntry(ientry); //read only this branch
+
 	//there are only 6 variables in the ntuple (vectors, one entry per particle):
 	//	_pt
 	//	_eta
@@ -26,7 +50,10 @@ void analysis::Loop() {
 	output_file->cd();
 
 	//here you can declare new histograms:
-	TH1 * h_mass = new TH1F("mass", "mass", 100, 0, 300);
+	Int_t bins = 100;
+	Float_t low = 0;
+	Float_t high = 300;
+	TH1 * h_mass = new TH1F("mass", "mass",bins,low,high);
 
 	//---------------------------------------
 
@@ -88,5 +115,42 @@ void analysis::Loop() {
 	}
 	output_file->Write();
 	return 0;
+}
+//Add some methods
+void analysis::ReadEvent(int jentry) {
+	LoadTree(jentry);
+	fChain->GetEntry(jentry);
+	_pt = (*mc_pt);
+	_eta = (*mc_eta);
+	_phi = (*mc_phi);
+	_m = (*mc_m);
+	_pdgid = (*mc_pdgid);
+	_status = (*mc_status);
+
+/*
+	//-------------------------------------
+	//build some jets:
+	vector<fastjet::PseudoJet> particles;
+	TLorentzVector tmp;
+	for(int i=0; i<_pdgid.size();i++) {
+		if( _status[i]==1){
+			tmp.SetPtEtaPhiM(_pt[i],_eta[i],_phi[i],_m[i]);
+			particles.push_back( fastjet::PseudoJet(tmp.Px(), tmp.Py(), tmp.Pz(), tmp.E() ) );
+		}
+	}
+	// choose a jet definition
+	double R = 0.4;
+	fastjet::JetDefinition jet_def(fastjet::antikt_algorithm, R);
+	// run the clustering
+	fastjet::ClusterSequence cs(particles, jet_def);
+
+	//here we can extract the jets for this event:
+	vector<fastjet::PseudoJet> jets = sorted_by_pt(cs.inclusive_jets());
+	for(int i=0; i<jets.size(); i++) {
+		TLorentzVector tmp;
+		tmp.SetPtEtaPhiM( jets[i].pt(), jets[i].eta(), jets[i].phi(), jets[i].m() );
+		_jets.push_back(tmp);
+	}
+	*/
 }
 

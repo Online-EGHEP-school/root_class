@@ -68,42 +68,7 @@ public :
 
 #ifdef analysis_cxx
 
-void analysis::ReadEvent(int jentry) {
-	LoadTree(jentry);
-	fChain->GetEntry(jentry);
-	_pt = (*mc_pt);
-	_eta = (*mc_eta);
-	_phi = (*mc_phi);
-	_m = (*mc_m);
-	_pdgid = (*mc_pdgid);
-	_status = (*mc_status);
 
-/*
-	//-------------------------------------
-	//build some jets:
-	vector<fastjet::PseudoJet> particles;
-	TLorentzVector tmp;
-	for(int i=0; i<_pdgid.size();i++) {
-		if( _status[i]==1){
-			tmp.SetPtEtaPhiM(_pt[i],_eta[i],_phi[i],_m[i]);
-			particles.push_back( fastjet::PseudoJet(tmp.Px(), tmp.Py(), tmp.Pz(), tmp.E() ) );
-		}
-	}
-	// choose a jet definition
-	double R = 0.4;
-	fastjet::JetDefinition jet_def(fastjet::antikt_algorithm, R);
-	// run the clustering
-	fastjet::ClusterSequence cs(particles, jet_def);
-
-	//here we can extract the jets for this event:
-	vector<fastjet::PseudoJet> jets = sorted_by_pt(cs.inclusive_jets());
-	for(int i=0; i<jets.size(); i++) {
-		TLorentzVector tmp;
-		tmp.SetPtEtaPhiM( jets[i].pt(), jets[i].eta(), jets[i].phi(), jets[i].m() );
-		_jets.push_back(tmp);
-	}
-	*/
-}
 analysis::analysis(TString file, TString outputfile) : fChain(0)
 {
 // if parameter tree is not specified (or zero), connect the file

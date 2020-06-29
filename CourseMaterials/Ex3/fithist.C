@@ -33,7 +33,6 @@ void fithist() {
    //fit function ftotal to signal + background
 
    histgen();
-
    TFile *f = new TFile("background.root");
    background = (TH1F*)f->Get("background"); //pointer used in ftotal
    TH1F *result = (TH1F*)f->Get("result");
